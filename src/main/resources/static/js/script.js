@@ -28,12 +28,9 @@ function renderizarTarefas(todos) {
             return;
         }
 
-        var lista = card.querySelector(".card-content"); // pega a div que vai receber a lista de tarefas
+        var lista = card.querySelector(".task-list"); // pega a div que vai receber a lista de tarefas
 
         // Cria os elementos na memória (ainda não estão na página).
-
-        var lista_ul = document.createElement("ul");
-        lista_ul.classList.add("task-list");
 
         var item = document.createElement("li");
 
@@ -50,8 +47,7 @@ function renderizarTarefas(todos) {
         // Monta a árvore: label e checkbox dentro do li, li dentro da lista do card certo.
         item.appendChild(checkbox);
         item.appendChild(label);
-        lista_ul.appendChild(item);
-        lista.appendChild(lista_ul);
+        lista.appendChild(item);
     });
 }
 
