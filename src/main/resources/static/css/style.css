@@ -78,15 +78,11 @@ main{
     width: 100%;
     margin-right: 10px;
     text-align: center;
-    background: #ddd;
+    background: #bababa;
     padding: 15px;
 }
 
 .tab a span:hover{
-    background: #fffb00;
-}
-
-.tab a span:active{
     background: #fffb00;
 }
 
@@ -103,6 +99,14 @@ main{
     border-width: 2px;
     border-radius: 5px;
     left: 25px;
+}
+
+.date.active{
+    background: #fffb00;
+}
+
+.date.active span {
+    background: #fffb00;
 }
 
 .card{
@@ -122,10 +126,6 @@ main{
     display: block;
     flex-direction: column;
     padding: 30px;
-    border-color: #000000;
-    border-style: solid;
-    border-width: 2px;
-    border-radius: 2px;
     max-height: 15vh;
     overflow-y: auto;
     box-sizing: border-box;
@@ -151,10 +151,14 @@ main{
     border-style: solid;
     border-width: 2px;
     border-radius: 10px;
-    width: 500px;
+    width: 600px;
     height: 100px;
     left: 50%;
     transform: translateX(-50%);
+}
+
+.form-container.hidden{
+    display: none;
 }
 
 #add-task-button{

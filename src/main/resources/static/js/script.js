@@ -1,111 +1,126 @@
-var main = function(todoObjects) {
-    "use strict"
+// Array de tarefas fictícias, simulando o que a API vai devolver depois.
+// Cada objeto representa uma tarefa, com os mesmos campos que combinamos: id, title, completed, weekday, priority.
+const todosFalsos = [
+    { id: 1, title: "Estudar para a prova", completed: false, weekday: "segunda", priority: "high"},
+    { id: 2, title: "Fazer compras", completed: false, weekday: "segunda", priority: "low"},
+    { id: 3, title: "Reunião com o professor", completed: false, weekday: "quinta", priority: "medium"}
+];
 
-    var todos = todoObjects.map(function (todo) {
-        return todo.description
+function renderizarTarefas(todos) {
+    // Passo 1: limpa o conteúdo de todas as listas antes de desenhar de novo.
+    // Sem isso, toda vez que essa função rodasse, ela ia empilhar tarefas repetidas
+    // em cima das que já estavam lá (inclusive os "New Task" fixos que estão no HTML hoje).
+    document.querySelectorAll(".task-list").forEach(function (lista) {
+        lista.innerHTML = "";
     });
 
-    $(".tab span").toArray().forEach(function (element) {
-        $(element).on("click", function () {
+    // Passo 2: para cada tarefa do array, monta o <li> e coloca no card do dia certo.
+    todos.forEach(function (todo) {
 
-            var $element = $(element), $content;
-                
+        // Seletor de atributo: encontra o ÚNICO .card cujo data-day bate com o weekday da tarefa.
+        var card = document.querySelector('.card[data-day="' + todo.weekday + '"]');
 
-            $(".tab span").removeClass("active");
-            $(element).addClass("active");
-            $("main .content").empty();
+        if (!card) {
+            // Proteção: se por algum motivo o weekday não bater com nenhum card
+            // (erro de digitação, valor inesperado vindo da API), avisa no console
+            // em vez de quebrar o resto da renderização.
+            console.warn("Nenhum card encontrado para o dia: " + todo.weekday);
+            return;
+        }
 
-            if($element.parent().is(":nth-child(1)")) {
-                console.log("FIRST TAB CLICKED!");
-                $content = $("<ul>");
-                for(let todo = todos.length -1; todo >= 0; todo--){
-                    $content.append($("<li>").text(todos[todo]));
-                }
-                $("main .content").append($content);
-            }else if ($element.parent().is(":nth-child(2)")) {
-                console.log("SECOND TAB CLICKED!");
-                $content = $("<ul>");
-                todos.forEach(function(todo) {
-                    $content.append($("<li>").text(todo));
-                });
-                $("main .content").append($content);
-            }else if ($element.parent().is(":nth-child(3)")) {
+        var lista = card.querySelector(".card-content"); // pega a div que vai receber a lista de tarefas
 
-                var organizedbytag = organizedbytag(todoObjects);
+        // Cria os elementos na memória (ainda não estão na página).
 
-                organizedbytag.forEach(function (tag){
-                    var $tagname = $("<h3>").text(tag.name),
-                        $content = $("<ul>");
+        var lista_ul = document.createElement("ul");
+        lista_ul.classList.add("task-list");
 
-                    tag.todos.forEach(function (description){
-                        var $li = $("<li>").text(description);
-                        $content.append($li);
-                    });
-                    $("main .content").append($tagname);
-                    $("main .content").append($content);
-                });
-            }else if ($element.parent().is(":nth-child(4)")){
-                var $input = $("<input>").addClass("description"),
-                    $inputLabel = $("<p>").text("Description: "),
-                    $tagInput = $("<input>").addClass("tags"),
-                    $tagLabel = $("<p>").text("Tags: "),
-                    $button = $("<button>").text("+");
+        var item = document.createElement("li");
 
-                $button.on("click", function () {
-                    var description = $input.val(),
-                    tags = $tagInput.val().split(",");
+        var checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = "task-" + todo.id;          // id único, resolve o bug do "for" que vimos antes
+        checkbox.checked = todo.completed;         // já nasce marcado se completed for true
+        checkbox.classList.add("priority-" + todo.priority); // pra aplicar a cor fixa da prioridade
 
-                    todoObjects.push({"description": description, "tags" : tags});
-                    todos = todoObjects.map(function (todo){
-                        return todo.description;
-                    });
-                    $input.val("");
-                    $tagInput.val("");
-                });
-                $content = $("<div>").append($inputLabel).append($input).append($tagLabel).append($tagInput).append($button);
-                $("main .content").append($content)
-            }
+        var label = document.createElement("label");
+        label.setAttribute("for", "task-" + todo.id); // aponta pro id único do checkbox acima
+        label.textContent = todo.title;
 
-            return false;
+        // Monta a árvore: label e checkbox dentro do li, li dentro da lista do card certo.
+        item.appendChild(checkbox);
+        item.appendChild(label);
+        lista_ul.appendChild(item);
+        lista.appendChild(lista_ul);
     });
-
-    var organizebytags = function (todoobjects) {
-        var tags = [];
-        
-        // Mapeia todas as tags únicas existentes
-        todoobjects.forEach(function (todo) {
-            todo.tags.forEach(function (tag) {
-                if(tags.indexOf(tag) === -1) {
-                    tags.push(tag);
-                }
-            });
-        });
-
-        // CORREÇÃO: Mudado o argumento do mapa de 'tags' para 'tag' (singular)
-        var tagobjects = tags.map(function (tag) {
-            var todoswithtag = [];
-    
-            todoobjects.forEach(function (todo) {
-                // CORREÇÃO: Agora 'tag' existe e faz a busca correta no indexOf
-                if(todo.tags.indexOf(tag) !== -1) {
-                    todoswithtag.push(todo.description);
-                }
-            });
-
-            // Retorna o objeto estruturado com a tag e a lista de afazeres dela
-            return {"name": tag, "todos": todoswithtag};
-        });
-
-        console.log(tagobjects);
-        return tagobjects; // Opcional: para usar esse array fora depois
-    };
- });
-
- $(".tab a:first-child span").trigger("click");
 }
 
-$(document).ready(function (todoObjects){
-    $.getJSON("todos.json", function (){
-        main(todoObjects);
+
+function selecaodata() {
+    document.querySelectorAll(".date").forEach(function (elementoDate) {
+        elementoDate.addEventListener("click", function (event) {
+            // Tira a classe "selecionado" de todos os .date primeiro
+            document.querySelectorAll(".date").forEach(function (outro) {
+                outro.classList.remove("active");
+                document.querySelector(".form-container").classList.add("hidden");
+                // Remove todos os elementos com a classe "form-name" da página
+                document.querySelectorAll(".form-name").forEach(function (formName) {
+                    formName.remove();
+                });
+            });
+            // Adiciona só no que foi clicado agora
+            event.currentTarget.classList.add("active");
+            // Mostra o formulário de adicionar tarefa
+            document.querySelector(".form-container.hidden").classList.remove("hidden");  
+            // Cria um novo elemento <div> com a classe "form-name" e o texto do .date clicado
+            var div = document.createElement("div");
+            div.classList.add("form-name");
+            div.textContent = event.currentTarget.textContent;
+            document.querySelector(".form-container").insertBefore(div, document.querySelector(".form-container").firstChild);
+
+        });
     });
-});
+}
+
+function adicionarTarefa() {
+    // Pega o valor do dataset do card ativo.
+    var week = document.querySelector(".date.active").parentElement.dataset.day;
+    var inputclear = document.querySelector("#new-task-title");
+    // Pega o valor do input de texto do card que chamou a função.
+    var input = document.querySelector("#new-task-title").value;
+
+    // trata erro de dataset vazio.
+    if (input === "") {
+        alert("O título da tarefa não pode ser vazio.");
+        return;
+    }
+
+    // Cria um novo objeto de tarefa com os dados fornecidos.
+    var novaTarefa = {
+        id: Date.now(), // gera um id único baseado no timestamp atual
+        title: input,
+        completed: false,
+        weekday: week,
+        priority: document.querySelector("#new-task-priority").value,
+    };
+
+    // Adiciona a nova tarefa ao array de tarefas (simulando o que a API faria).
+    todosFalsos.push(novaTarefa);
+
+    // Re-renderiza as tarefas para incluir a nova.
+    renderizarTarefas(todosFalsos);
+
+    // Limpa o input de texto para a próxima tarefa.
+    inputclear.value = "";
+
+    console.log(novaTarefa);
+}
+
+// Adiciona o evento de clique para todos os botões "Add Task" existentes na página.
+document.querySelector("#add-task-button").addEventListener("click", adicionarTarefa);
+
+// Chama a função de seleção do card assim que o script carrega.
+selecaodata();
+
+// Chama a função assim que o script carrega, pra já ver algo na tela.
+renderizarTarefas(todosFalsos);
