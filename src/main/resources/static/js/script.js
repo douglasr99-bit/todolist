@@ -1,9 +1,9 @@
 // Array de tarefas fictícias, simulando o que a API vai devolver depois.
 // Cada objeto representa uma tarefa, com os mesmos campos que combinamos: id, title, completed, weekday, priority.
 const todosFalsos = [
-    { id: 1, title: "Estudar para a prova", completed: false, weekday: "segunda", priority: "high"},
-    { id: 2, title: "Fazer compras", completed: false, weekday: "segunda", priority: "low"},
-    { id: 3, title: "Reunião com o professor", completed: false, weekday: "quinta", priority: "medium"}
+    { id: 1, title: "Estudar para a prova", completed: false, weekday: "segunda", priority: "high", color: null},
+    { id: 2, title: "Fazer compras", completed: false, weekday: "segunda", priority: "low", color: null},
+    { id: 3, title: "Reunião com o professor", completed: false, weekday: "quinta", priority: "medium", color: null}
 ];
 
 function renderizarTarefas(todos) {
@@ -33,6 +33,7 @@ function renderizarTarefas(todos) {
         // Cria os elementos na memória (ainda não estão na página).
 
         var item = document.createElement("li");
+        item.classList.add("li")
 
         var checkbox = document.createElement("input");
         checkbox.type = "checkbox";
@@ -55,9 +56,10 @@ function renderizarTarefas(todos) {
 function selecaodata() {
     document.querySelectorAll(".date").forEach(function (elementoDate) {
         elementoDate.addEventListener("click", function (event) {
-            // Tira a classe "selecionado" de todos os .date primeiro
+            // Tira a classe "active" de todos os .date primeiro
             document.querySelectorAll(".date").forEach(function (outro) {
                 outro.classList.remove("active");
+                // Adiciona hidden no conteiner do formulário
                 document.querySelector(".form-container").classList.add("hidden");
                 // Remove todos os elementos com a classe "form-name" da página
                 document.querySelectorAll(".form-name").forEach(function (formName) {
@@ -75,15 +77,19 @@ function selecaodata() {
             document.querySelector(".form-container").insertBefore(div, document.querySelector(".form-container").firstChild);
 
         });
+
     });
 }
 
 function adicionarTarefa() {
     // Pega o valor do dataset do card ativo.
     var week = document.querySelector(".date.active").parentElement.dataset.day;
+    // variável auxiliar para limpar input
     var inputclear = document.querySelector("#new-task-title");
     // Pega o valor do input de texto do card que chamou a função.
     var input = document.querySelector("#new-task-title").value;
+    // Pega a cor do input color delecionado.
+    var colorinput = document.querySelector("#new-task-color")
 
     // trata erro de dataset vazio.
     if (input === "") {
@@ -98,6 +104,7 @@ function adicionarTarefa() {
         completed: false,
         weekday: week,
         priority: document.querySelector("#new-task-priority").value,
+        color: colorinput.value
     };
 
     // Adiciona a nova tarefa ao array de tarefas (simulando o que a API faria).
@@ -109,7 +116,15 @@ function adicionarTarefa() {
     // Limpa o input de texto para a próxima tarefa.
     inputclear.value = "";
 
-    console.log(novaTarefa);
+}
+
+function colorintime(){
+    var colorinput = document.querySelector("#new-task-color");
+
+    colorinput.addEventListener("input", function(event){
+        var cardAtivo = document.querySelector(".date.active").parentElement;
+        cardAtivo.style.backgroundColor = event.target.value;
+    });
 }
 
 // Adiciona o evento de clique para todos os botões "Add Task" existentes na página.
@@ -117,6 +132,7 @@ document.querySelector("#add-task-button").addEventListener("click", adicionarTa
 
 // Chama a função de seleção do card assim que o script carrega.
 selecaodata();
+colorintime();
 
 // Chama a função assim que o script carrega, pra já ver algo na tela.
 renderizarTarefas(todosFalsos);
