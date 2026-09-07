@@ -28,18 +28,19 @@ function renderizarTarefas(todos) {
             return;
         }
 
+        card.style.backgroundColor = todo.color
+
         var lista = card.querySelector(".task-list"); // pega a div que vai receber a lista de tarefas
 
         // Cria os elementos na memória (ainda não estão na página).
 
         var item = document.createElement("li");
-        item.classList.add("li")
+        item.classList.add(todo.priority); // pra aplicar a cor fixa da prioridade
 
         var checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.id = "task-" + todo.id;          // id único, resolve o bug do "for" que vimos antes
         checkbox.checked = todo.completed;         // já nasce marcado se completed for true
-        checkbox.classList.add("priority-" + todo.priority); // pra aplicar a cor fixa da prioridade
 
         var label = document.createElement("label");
         label.setAttribute("for", "task-" + todo.id); // aponta pro id único do checkbox acima
@@ -132,7 +133,7 @@ document.querySelector("#add-task-button").addEventListener("click", adicionarTa
 
 // Chama a função de seleção do card assim que o script carrega.
 selecaodata();
-colorintime();
 
+colorintime();
 // Chama a função assim que o script carrega, pra já ver algo na tela.
 renderizarTarefas(todosFalsos);

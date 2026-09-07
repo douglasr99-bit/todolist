@@ -139,10 +139,12 @@ main{
 }
 
 .task-list {
-    display: block;
-    list-style-type: none;
+    display: flex;
+    flex-direction: column;
     padding: 0;
     margin: 0;
+    gap: 10px;
+    list-style-type: none;
 }
 
 .form-container{
@@ -186,3 +188,37 @@ main{
     gap: 10px;
     background-color: #fffefe;
 }
+
+.low{
+    display: flex;
+    background-color: #00FF00;
+    border-color: #000000;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 4px;
+    padding: 5px;
+    gap: 5px;
+}
+
+.medium{
+    display: flex;
+    background-color: #FFFF00;
+    border-color: #000000;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 4px;
+    padding: 5px;
+    gap: 5px;
+}
+
+.high{
+    display: flex;
+    background-color: #FF0000;
+    border-color: #000000;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 4px;
+    padding: 5px;
+    gap: 5px;
+}
+
