@@ -123,7 +123,15 @@ main{
     border-style: solid;
     border-width: 2px;
     border-radius: 10px;
+    box-shadow: 0 10px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
 
 .card-content{
     display: block;
@@ -132,10 +140,20 @@ main{
     height: 300px;
     width: 200px;
     max-height: 15vh;
+    border: 3px solid transparent;
+    border-image: linear-gradient(5deg, #040404, #979797) 1;
     overflow-y: auto;
     box-sizing: border-box;
     overflow-x: hidden;
     background-color: #ffffff;
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.02),
+        rgba(0, 0, 0, 0.02) 10px,
+        transparent 10px,
+        transparent 20px
+    );
+
 }
 
 .task-list {
@@ -150,7 +168,7 @@ main{
 .form-container{
     position: relative;
     padding: 10px 10px 10px 10px; 
-    margin-top: 20px;
+    margin-top: 50px;
     gap: 20px;
     display: flex;
     justify-content: center;
@@ -163,6 +181,7 @@ main{
     height: 100px;
     left: 50%;
     transform: translateX(-50%);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
 }
 
 .form-container.hidden{
