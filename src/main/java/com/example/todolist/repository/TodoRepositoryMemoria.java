@@ -22,22 +22,22 @@ public class TodoRepositoryMemoria implements TodoRepository{
 
     @Override
     public List<Todo> listarTodos() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listarTodos'");
+        return tarefas;
     }
 
     @Override
     public void atualizarStatus(Integer id, boolean completed) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'atualizarStatus'");
+        for (Todo todo : tarefas) {
+            if (todo.getId().equals(id)) {
+                todo.setCompleted(completed);
+                return;
+            }
+        }
     }
 
     @Override
     public void remover(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'remover'");
+        tarefas.removeIf(todo -> todo.getId().equals(id));
     }
-
-
     
 }
