@@ -63,4 +63,10 @@ public class Todo {
     public void setPriority(String priority){
         this.priority = priority;
     }
+
+    @Override
+    public String toString() {
+        return "Todo{id=" + id + ", title='" + title + "', weekday='" + weekday + "', priority='" + priority + "', completed=" + completed + "}";
+    }
+
 }

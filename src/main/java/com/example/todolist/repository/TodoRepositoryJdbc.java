@@ -2,13 +2,16 @@ package com.example.todolist.repository;
 
 import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import com.example.todolist.model.Todo;
 
+@Repository 
 public class TodoRepositoryJdbc implements TodoRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -61,6 +64,26 @@ public class TodoRepositoryJdbc implements TodoRepository {
     public void remover(Integer id) {
         String sql = "DELETE FROM todos WHERE id = ?";
         jdbcTemplate.update(sql, id);
+    }
+
+    @Override
+    public Optional<Todo> buscarPorId(Integer id) {
+        String sql = "SELECT * FROM todos WHERE id = ?";
+
+        List<Todo> resultados = jdbcTemplate.query(sql, (rs, rowNum) ->{
+            Todo todo = new Todo();
+            todo.setId(rs.getInt("id"));
+            todo.setTitle(rs.getString("title"));
+            todo.setWeekday(rs.getString("weekday"));
+            todo.setPriority(rs.getString("priority"));
+            todo.setCompleted(rs.getBoolean("completed"));
+            return todo;
+        }, id);
+
+        if (resultados.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(resultados.get(0));
     }
 
 }

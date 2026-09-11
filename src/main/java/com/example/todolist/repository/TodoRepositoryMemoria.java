@@ -2,6 +2,7 @@ package com.example.todolist.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.example.todolist.model.Todo;
 
@@ -38,6 +39,16 @@ public class TodoRepositoryMemoria implements TodoRepository{
     @Override
     public void remover(Integer id) {
         tarefas.removeIf(todo -> todo.getId().equals(id));
+    }
+
+    @Override
+    public Optional<Todo> buscarPorId(Integer id) {
+       for (Todo todo : tarefas){
+        if (todo.getId().equals(id)) {
+            return Optional.of(todo);
+        }
+    }
+        return Optional.empty();
     }
     
 }
