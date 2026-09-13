@@ -1,6 +1,7 @@
 package com.example.todolist.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -37,10 +38,12 @@ public class TodoService {
         repository.remover(id);
     }
 
-    public void atualizarStatus(Integer id, boolean completed) {
-        if (repository.buscarPorId(id).isEmpty()) {
+    public void alternarStatus(Integer id) {
+        Optional<Todo> tarefaExistente = repository.buscarPorId(id);
+        if (tarefaExistente.isEmpty()) {
             throw new TarefaNaoEncontradaException("tarefa não encontrada");
         }
-        repository.atualizarStatus(id, completed);
+        boolean novoStatus = !tarefaExistente.get().getCompleted();
+        repository.atualizarStatus(id, novoStatus);
     }
 }

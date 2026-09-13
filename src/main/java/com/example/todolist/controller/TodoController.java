@@ -35,9 +35,9 @@ public class TodoController {
         return service.criarTarefa(todo);
     }
 
-    @PatchMapping("/{id}")
-    public void atualizarStatus(@PathVariable Integer id, @RequestParam boolean completed) {
-        service.atualizarStatus(id, completed);
+    @PatchMapping("/{id}/toggle")
+    public void alternarStatus(@PathVariable Integer id) {
+        service.alternarStatus(id);
     }
 
     @DeleteMapping("/{id}")

@@ -28,7 +28,7 @@ function renderizarTarefas(todos) {
         checkbox.checked = todo.completed;
 
         checkbox.addEventListener("change", async function () {
-            await fetch("/todos/" + todo.id + "?completed=" + checkbox.checked, {
+            await fetch("/todos/" + todo.id + "/toggle", {
                 method: "PATCH"
             });
         });
