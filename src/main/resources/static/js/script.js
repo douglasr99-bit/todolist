@@ -9,9 +9,11 @@ function aplicarCorDoDiaAtual() {
     var diaAtual = obterDiaAtual();
     var corDoDia = localStorage.getItem("cor-" + diaAtual);
     var main = document.querySelector("main");
+    var tab = document.querySelector(".tab");
 
     if (corDoDia) {
         main.style.backgroundColor = corDoDia;
+        tab.style.backgroundColor = corDoDia;
     }
 }
 
