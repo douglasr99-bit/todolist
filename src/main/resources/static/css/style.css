@@ -241,3 +241,108 @@ main{
     gap: 5px;
 }
 
+.btn-remover {
+    background-color: transparent;
+    border: none;
+    color: #e74c3c;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 50%;
+    margin-left: auto;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-remover:hover {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+/* Tablets e telas médias */
+@media (max-width: 900px) {
+    .container {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    header h1 {
+        width: auto;
+        font-size: 3.5em;
+        float: none;
+    }
+
+    .tab {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .date {
+        width: 100px;
+        margin-right: 20px;
+        left: 0;
+    }
+
+    .card {
+        width: 250px;
+        height: 280px;
+        margin-right: 0;
+    }
+
+    .form-container {
+        width: 90%;
+    }
+}
+
+/* Celulares */
+@media (max-width: 500px) {
+    body {
+        font-size: 90%;
+    }
+
+    header h1 {
+        font-size: 2em;
+        text-align: center;
+    }
+
+    .container {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .tab {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .date {
+        width: 90%;
+        max-width: 250px;
+        margin-right: 0;
+        left: 0;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 320px;
+        height: auto;
+        margin-right: 0;
+    }
+
+    .card-content {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .form-container {
+        width: 95%;
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+    }
+
+    #add-task-button {
+        width: 100%;
+    }
+}

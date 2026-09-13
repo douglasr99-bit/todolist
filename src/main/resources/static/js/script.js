@@ -1,139 +1,133 @@
-// Array de tarefas fictícias, simulando o que a API vai devolver depois.
-// Cada objeto representa uma tarefa, com os mesmos campos que combinamos: id, title, completed, weekday, priority.
-const todosFalsos = [
-    { id: 1, title: "Estudar para a prova", completed: false, weekday: "segunda", priority: "high", color: null},
-    { id: 2, title: "Fazer compras", completed: false, weekday: "segunda", priority: "low", color: null},
-    { id: 3, title: "Reunião com o professor", completed: false, weekday: "quinta", priority: "medium", color: null}
-];
+async function carregarTarefas() {
+    const resposta = await fetch("/todos");
+    const dados = await resposta.json();
+    renderizarTarefas(dados);
+}
 
 function renderizarTarefas(todos) {
-    // Passo 1: limpa o conteúdo de todas as listas antes de desenhar de novo.
-    // Sem isso, toda vez que essa função rodasse, ela ia empilhar tarefas repetidas
-    // em cima das que já estavam lá (inclusive os "New Task" fixos que estão no HTML hoje).
     document.querySelectorAll(".task-list").forEach(function (lista) {
         lista.innerHTML = "";
     });
 
-    // Passo 2: para cada tarefa do array, monta o <li> e coloca no card do dia certo.
     todos.forEach(function (todo) {
-
-        // Seletor de atributo: encontra o ÚNICO .card cujo data-day bate com o weekday da tarefa.
         var card = document.querySelector('.card[data-day="' + todo.weekday + '"]');
 
         if (!card) {
-            // Proteção: se por algum motivo o weekday não bater com nenhum card
-            // (erro de digitação, valor inesperado vindo da API), avisa no console
-            // em vez de quebrar o resto da renderização.
             console.warn("Nenhum card encontrado para o dia: " + todo.weekday);
             return;
         }
 
-        card.style.backgroundColor = todo.color
-
-        var lista = card.querySelector(".task-list"); // pega a div que vai receber a lista de tarefas
-
-        // Cria os elementos na memória (ainda não estão na página).
+        var lista = card.querySelector(".task-list");
 
         var item = document.createElement("li");
-        item.classList.add(todo.priority); // pra aplicar a cor fixa da prioridade
+        item.classList.add(todo.priority);
 
         var checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        checkbox.id = "task-" + todo.id;          // id único, resolve o bug do "for" que vimos antes
-        checkbox.checked = todo.completed;         // já nasce marcado se completed for true
+        checkbox.id = "task-" + todo.id;
+        checkbox.checked = todo.completed;
+
+        checkbox.addEventListener("change", async function () {
+            await fetch("/todos/" + todo.id + "?completed=" + checkbox.checked, {
+                method: "PATCH"
+            });
+        });
 
         var label = document.createElement("label");
-        label.setAttribute("for", "task-" + todo.id); // aponta pro id único do checkbox acima
+        label.setAttribute("for", "task-" + todo.id);
         label.textContent = todo.title;
 
-        // Monta a árvore: label e checkbox dentro do li, li dentro da lista do card certo.
+        var btnRemover = document.createElement("button");
+        btnRemover.textContent = "x";
+        btnRemover.classList.add("btn-remover");
+        btnRemover.addEventListener("click", async function () {
+            await fetch("/todos/" + todo.id, { method: "DELETE" });
+            carregarTarefas();
+        });
+
         item.appendChild(checkbox);
         item.appendChild(label);
+        item.appendChild(btnRemover);
         lista.appendChild(item);
     });
 }
 
-
 function selecaodata() {
     document.querySelectorAll(".date").forEach(function (elementoDate) {
         elementoDate.addEventListener("click", function (event) {
-            // Tira a classe "active" de todos os .date primeiro
             document.querySelectorAll(".date").forEach(function (outro) {
                 outro.classList.remove("active");
-                // Adiciona hidden no conteiner do formulário
                 document.querySelector(".form-container").classList.add("hidden");
-                // Remove todos os elementos com a classe "form-name" da página
                 document.querySelectorAll(".form-name").forEach(function (formName) {
                     formName.remove();
                 });
             });
-            // Adiciona só no que foi clicado agora
             event.currentTarget.classList.add("active");
-            // Mostra o formulário de adicionar tarefa
-            document.querySelector(".form-container.hidden").classList.remove("hidden");  
-            // Cria um novo elemento <div> com a classe "form-name" e o texto do .date clicado
+            document.querySelector(".form-container.hidden").classList.remove("hidden");
             var div = document.createElement("div");
             div.classList.add("form-name");
             div.textContent = event.currentTarget.textContent;
             document.querySelector(".form-container").insertBefore(div, document.querySelector(".form-container").firstChild);
-
         });
-
     });
 }
 
-function adicionarTarefa() {
-    // Pega o valor do dataset do card ativo.
+async function adicionarTarefa() {
     var week = document.querySelector(".date.active").parentElement.dataset.day;
-    // variável auxiliar para limpar input
     var inputclear = document.querySelector("#new-task-title");
-    // Pega o valor do input de texto do card que chamou a função.
     var input = document.querySelector("#new-task-title").value;
-    // Pega a cor do input color delecionado.
-    var colorinput = document.querySelector("#new-task-color")
 
-    // trata erro de dataset vazio.
     if (input === "") {
         alert("O título da tarefa não pode ser vazio.");
         return;
     }
 
-    // Cria um novo objeto de tarefa com os dados fornecidos.
     var novaTarefa = {
-        id: Date.now(), // gera um id único baseado no timestamp atual
         title: input,
         completed: false,
         weekday: week,
-        priority: document.querySelector("#new-task-priority").value,
-        color: colorinput.value
+        priority: document.querySelector("#new-task-priority").value
     };
 
-    // Adiciona a nova tarefa ao array de tarefas (simulando o que a API faria).
-    todosFalsos.push(novaTarefa);
+    await fetch("/todos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(novaTarefa)
+    });
 
-    // Re-renderiza as tarefas para incluir a nova.
-    renderizarTarefas(todosFalsos);
+    await carregarTarefas();
 
-    // Limpa o input de texto para a próxima tarefa.
     inputclear.value = "";
-
 }
 
-function colorintime(){
-    var colorinput = document.querySelector("#new-task-color");
+function salvarCorCard(weekday, cor) {
+    localStorage.setItem("cor-" + weekday, cor);
+}
 
-    colorinput.addEventListener("input", function(event){
-        var cardAtivo = document.querySelector(".date.active").parentElement;
-        cardAtivo.style.backgroundColor = event.target.value;
+function aplicarCoresSalvas() {
+    document.querySelectorAll(".card").forEach(function (card) {
+        var dia = card.dataset.day;
+        var corSalva = localStorage.getItem("cor-" + dia);
+        if (corSalva) {
+            card.style.backgroundColor = corSalva;
+        }
     });
 }
 
-// Adiciona o evento de clique para todos os botões "Add Task" existentes na página.
+function colorintime() {
+    var colorinput = document.querySelector("#new-task-color");
+
+    colorinput.addEventListener("input", function (event) {
+        var cardAtivo = document.querySelector(".date.active").parentElement;
+        var dia = cardAtivo.dataset.day;
+        cardAtivo.style.backgroundColor = event.target.value;
+        salvarCorCard(dia, event.target.value);
+    });
+}
+
 document.querySelector("#add-task-button").addEventListener("click", adicionarTarefa);
 
-// Chama a função de seleção do card assim que o script carrega.
 selecaodata();
-
 colorintime();
-// Chama a função assim que o script carrega, pra já ver algo na tela.
-renderizarTarefas(todosFalsos);
+aplicarCoresSalvas();
+carregarTarefas();
