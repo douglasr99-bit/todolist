@@ -1,3 +1,20 @@
+const DIAS_SEMANA = ["domingo", "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
+
+function obterDiaAtual() {
+    var indice = new Date().getDay();
+    return DIAS_SEMANA[indice];
+}
+
+function aplicarCorDoDiaAtual() {
+    var diaAtual = obterDiaAtual();
+    var corDoDia = localStorage.getItem("cor-" + diaAtual);
+    var main = document.querySelector("main");
+
+    if (corDoDia) {
+        main.style.backgroundColor = corDoDia;
+    }
+}
+
 async function carregarTarefas() {
     const resposta = await fetch("/todos");
     const dados = await resposta.json();
@@ -122,6 +139,10 @@ function colorintime() {
         var dia = cardAtivo.dataset.day;
         cardAtivo.style.backgroundColor = event.target.value;
         salvarCorCard(dia, event.target.value);
+
+        if (dia === obterDiaAtual()) {
+            aplicarCorDoDiaAtual();
+        }
     });
 }
 
@@ -130,4 +151,5 @@ document.querySelector("#add-task-button").addEventListener("click", adicionarTa
 selecaodata();
 colorintime();
 aplicarCoresSalvas();
+aplicarCorDoDiaAtual();
 carregarTarefas();
