@@ -38,7 +38,12 @@ public class TodoRepositoryMemoria implements TodoRepository{
 
     @Override
     public void remover(Integer id) {
-        tarefas.removeIf(todo -> todo.getId().equals(id));
+        for (Todo todo : tarefas) {
+            if (todo.getId().equals(id)) {
+                tarefas.remove(todo);
+                return;
+            }
+        }
     }
 
     @Override
