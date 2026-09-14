@@ -7,11 +7,10 @@ import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 
 import com.example.todolist.model.Todo;
 
-@Repository 
+
 public class TodoRepositoryJdbc implements TodoRepository {
 
     private final JdbcTemplate jdbcTemplate;
